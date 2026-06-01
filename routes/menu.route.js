@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { authenticateKey } from '../middlewares/auth.middleware.js';
-import { getMenu } from '../services/menu.service.js';
+import { getMenu, getMenuById } from '../services/menu.service.js';
 
 const router = Router();
 
@@ -12,6 +12,24 @@ router.get('/', authenticateKey, async (req, res, next) => {
         res.json({
             success: true,
             menu: result.menu,
+        });
+    } else {
+        next({
+            status: 404,
+            message: result.message,
+        });
+    }
+});
+
+// GET menu by ID
+router.get('/:prodId', authenticateKey, async (req, res, next) => {
+    const {prodId} = req.params;
+    const result = await getMenuById(prodId);
+
+    if (result.success) {
+        res.json({
+            success: true,
+            product: result.product,
         });
     } else {
         next({
