@@ -1,7 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 // import menuRouter from './routes/menu.route.js';
-import keysRouter from './routes/keys.route.js';
+import keysRouter from './routes/keys.route.js'
 import authRouter from './routes/auth.route.js';
 import mongoose from 'mongoose';
 import { errorHandler } from './middlewares/errorHandler.middleware.js';
