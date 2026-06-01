@@ -1,7 +1,7 @@
 import express from 'express';
 import dotenv from 'dotenv';
 // import menuRouter from './routes/menu.route.js';
-// import keysRouter from './routes/keys.route.js';
+import keysRouter from './routes/keys.route.js';
 import authRouter from './routes/auth.route.js';
 import mongoose from 'mongoose';
 import { errorHandler } from './middlewares/errorHandler.middleware.js';
@@ -26,7 +26,7 @@ app.use(express.json());
 // app.use('/api/menu', menuRouter);
 // app.use('/api/cart', cartRouter);
 // app.use('/api/orders', orderRouter);
-// app.use('/api/keys', keysRouter);
+app.use('/api/keys', keysRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/docs', swaggerUI.serve, swaggerUI.setup(swaggerDocs));
 
