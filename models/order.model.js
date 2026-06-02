@@ -27,8 +27,12 @@ const orderSchema = new Schema({
         unique: true,
         required: true,
     },
+    cartId: {
+        type: String,
+        required: true,
+    },
     items: [
-        cartItemSchema
+        orderItemSchema
     ]
 });
 
