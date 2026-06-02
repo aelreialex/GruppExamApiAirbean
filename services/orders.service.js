@@ -22,6 +22,7 @@ export const getOrders = async () => {
 export const getOrderByID = async (userId) => {
     try {
         const result = await Order.find({ cartId : userId.userId });
+        if(result.length === 0) throw new Error('Could not find order');
         return {
             success: true,
             orders: result,

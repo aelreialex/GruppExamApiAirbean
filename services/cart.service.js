@@ -21,8 +21,9 @@ export const getCarts = async () => {
 export const getCartByID = async (cartId) => {
     try {
         const result = await Cart.findOne(cartId);
+        if(!result) throw new Error('Could not find cart');
         return {
-            success: true,
+            success: false,
             cart: result,
         };
     } catch (error) {
