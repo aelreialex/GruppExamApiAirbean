@@ -15,20 +15,3 @@ export const getMenu = async () => {
         };
     }
 };
-
-// Get menu by ID
-export const getMenuById = async (prodId) => {
-    try {
-        const result = await Product.findOne({prodId});
-        return {
-            success : true,
-            product : result
-        }
-        
-    } catch(error) {
-        return {
-            success : false,
-            message : error.message
-        }
-    }
-}

@@ -17,6 +17,22 @@ export const getCarts = async () => {
     }
 };
 
+// GET cart by ID
+export const getCartByID = async (cartId) => {
+    try {
+        const result = await Cart.findOne(cartId);
+        return {
+            success: true,
+            cart: result,
+        };
+    } catch (error) {
+        return {
+            success: false,
+            message: error.message,
+        };
+    }
+};
+
 // PATCH cart
 export const addCart = async (product) => {
     try {
@@ -26,10 +42,6 @@ export const addCart = async (product) => {
             console.log(item);
 
             if(cart) {
-                // console.log("Updating cart...");
-                // cart.items = item;
-                // cart.items.qty = product.qty;
-                // const updatedCart = await cart.save();
                 const cartItem = cart.items.find(i => i.prodId === product.prodId);
                 if(cartItem) {
                     cartItem.qty = product.qty;
@@ -63,22 +75,26 @@ export const addCart = async (product) => {
                     cart : result
                 }
             }
-            // let newItem = {
-            //     ...item,
-            //     qty: qty
-            // }
-            // const result = await Cart.create({
-            //     _id,
-            //     ...newItem
-            // });
-            // return {
-            //     success : true,
-            //     cart : result
-            // }
         } catch(error) {
             return {
                 success : false,
                 message : error.message
             }
+    }
+};
+
+//DELETE cart by ID
+export const removeCart = async (cartId) => {
+    try {
+        const result = await Cart.findOneAndDelete({ cartId });
+        return {
+            success: true,
+            todo: result,
+        };
+    } catch (error) {
+        return {
+            success: false,
+            message: error.message,
+        };
     }
 };
