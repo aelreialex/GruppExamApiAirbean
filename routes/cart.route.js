@@ -1,17 +1,20 @@
 import { Router } from 'express';
-import { authenticateKey, authorizeUser } from '../middlewares/auth.middleware.js';
+import { authenticateKey } from '../middlewares/auth.middleware.js';
 import { getCarts, addCart, getCartByID } from '../services/cart.service.js';
+import { validateCartBody } from '../middlewares/validate.middlewate.js';
 
 const router = Router();
 
+router.use(authenticateKey);
+
 //GET All carts
-router.get('/', authenticateKey, async (req, res, next) => {
+router.get('/', async (req, res, next) => {
     const result = await getCarts();
 
     if (result.success) {
         res.json({
             success: true,
-            carts: result,
+            carts: result.cart,
         });
     } else {
         next({
@@ -22,13 +25,13 @@ router.get('/', authenticateKey, async (req, res, next) => {
 });
 
 //GET cart by ID
-router.get('/:cartId', authenticateKey, async (req, res, next) => {
+router.get('/:cartId', async (req, res, next) => {
     const result = await getCartByID(req.params);
 
     if (result.success) {
         res.json({
             success: true,
-            carts: result,
+            cart: result.cart,
         });
     } else {
         next({
@@ -39,37 +42,45 @@ router.get('/:cartId', authenticateKey, async (req, res, next) => {
 });
 
 // PATCH cart
-router.patch('/', authenticateKey, async (req, res, next) => {
+router.patch('/', validateCartBody, async (req, res, next) => {
     const product = req.body;
     const user = global.user;
-    if(!product) {
-        next({
-            status : 400,
-            message : 'No request body provided'
-        });
-    }
-    if(!user) {
+
+    if (!user) {
         const result = await addCart({
-            cartId : crypto.randomUUID().substring(0, 5),
-            ...product
+            cartId: crypto.randomUUID().substring(0, 5),
+            ...product,
         });
 
-        res.json({
-            success: true,
-            carts: result,
-        });
+        if (result.success) {
+            res.json({
+                success: true,
+                carts: result.cart,
+            });
+        } else {
+            next({
+                status: 400,
+                message: result.message,
+            });
+        }
     } else if (user) {
         const result = await addCart({
-            cartId : user.userId,
-            ...product
+            cartId: user.userId,
+            ...product,
         });
 
-        res.json({
-            success: true,
-            carts: result,
-        });
+        if (result.success) {
+            res.json({
+                success: true,
+                carts: result.cart,
+            });
+        } else {
+            next({
+                status: 400,
+                message: result.message,
+            });
+        }
     }
-    
 });
 
 export default router;
