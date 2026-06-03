@@ -1,6 +1,11 @@
 import { Router } from 'express';
-import { authenticateKey, authorizeUser } from '../middlewares/auth.middleware.js';
-import { getOrders, addOrder, getOrderByID } from '../services/orders.service.js';
+import { authenticateKey } from '../middlewares/auth.middleware.js';
+import {
+    getOrders,
+    addOrder,
+    getOrderByID,
+} from '../services/orders.service.js';
+import { validateOrderBody } from '../middlewares/validate.middlewate.js';
 
 const router = Router();
 
@@ -13,7 +18,7 @@ router.get('/', async (req, res, next) => {
     if (result.success) {
         res.json({
             success: true,
-            orders: result,
+            orders: result.orders,
         });
     } else {
         next({
@@ -24,13 +29,13 @@ router.get('/', async (req, res, next) => {
 });
 
 //GET order by ID
-router.get('/:userId', authorizeUser, async (req, res, next) => {
+router.get('/:userId', async (req, res, next) => {
     const result = await getOrderByID(req.params);
 
     if (result.success) {
         res.json({
             success: true,
-            orders: result,
+            orders: result.orders,
         });
     } else {
         next({
@@ -41,26 +46,25 @@ router.get('/:userId', authorizeUser, async (req, res, next) => {
 });
 
 //POST add order
-router.post('/', async (req, res, next) => {
+router.post('/', validateOrderBody, async (req, res, next) => {
     const cartId = req.body;
     const user = global.user;
-    if(!cartId) {
+    if (!cartId) {
         next({
-            status : 400,
-            message : 'No request body provided'
+            status: 400,
+            message: 'No request body provided',
         });
     }
 
     const result = await addOrder({
-        orderId : crypto.randomUUID().substring(0, 5),
-        ...cartId
+        orderId: crypto.randomUUID().substring(0, 5),
+        ...cartId,
     });
 
     res.json({
         success: true,
-        carts: result,
+        carts: result.order,
     });
-    
 });
 
 export default router;
